@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Trends Scraper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        #runScript {
+            background-color: #3498db;
+            color: white;
+            font-size: 1.2rem;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #runScript:hover {
+            background-color: #2980b9;
+        }
+        #results {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #results.show {
+            opacity: 1;
+        }
+        #results h3 {
+            color: #34495e;
+            font-size: 1.6rem;
+        }
+        #results ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #results ul li {
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        #results ul li:hover {
+            transform: scale(1.05);
+        }
+        #results p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+        .loading {
+            font-size: 1.5rem;
+            color: #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Twitter Trends Scraper</h1>
+    <button id="runScript">Click here to run the script</button>
+    <div id="results" class="loading">Loading...</div>
+    
+    <script>
+        document.getElementById("runScript").addEventListener("click", async () => {
+            const resultDiv = document.getElementById("results");
+            resultDiv.style.display = "none";  // Hide loading message initially
+
+            const loadingMessage = document.createElement("p");
+            loadingMessage.classList.add("loading");
+            loadingMessage.innerText = "Fetching data from Twitter...";
+            resultDiv.innerHTML = '';
+            resultDiv.appendChild(loadingMessage);
+            resultDiv.style.display = "block";  // Show loading message
+
+            const response = await fetch("/run-script");
+            const data = await response.json();
+            
+            resultDiv.innerHTML = `
+                <h3>Trending Topics as of ${data.datetime}:</h3>
+                <ul>
+                    <li>${data.trend1}</li>
+                    <li>${data.trend2}</li>
+                    <li>${data.trend3}</li>
+                    <li>${data.trend4}</li>
+                    <li>${data.trend5}</li>
+                </ul>
+                <p>The IP address used for this query was ${data.ip_address}.</p>
+            `;
+            
+            // Add the 'show' class to trigger the fade-in animation
+            setTimeout(() => {
+                resultDiv.classList.add('show');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
